@@ -1,11 +1,10 @@
-#Data handler module to provide the clean data to all the models and perfrom operations like test train split 
-
 import pandas as pd
-from sklearn.model_selection import train_test_split
+import os
 
-INPUT_FILE_NAME_TRAIN_DATA="./train_data.csv"
-INPUT_FILE_NAME_TEST_DATA="./test_data.csv"
-INPUT_FILE_NAME_VALIDATION_DATA = "./val_data.csv"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+INPUT_FILE_NAME_TRAIN_DATA = os.path.join(BASE_DIR, "train_data.csv")
+INPUT_FILE_NAME_TEST_DATA = os.path.join(BASE_DIR, "test_data.csv")
+INPUT_FILE_NAME_VALIDATION_DATA = os.path.join(BASE_DIR, "val_data.csv")
 
 class DataHandler:
     def __init__(self):

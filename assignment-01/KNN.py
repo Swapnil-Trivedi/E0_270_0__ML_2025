@@ -21,7 +21,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from data.data_handler import DataHandler
+from data_handler.data_handler import DataHandler
 
 dh=DataHandler()
 dh.train_data.head()
