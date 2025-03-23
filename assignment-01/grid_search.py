@@ -49,4 +49,11 @@ class GridSearch:
         print("Best Cross-Val Score:", grid_search.best_score_)
         return grid_search.best_params_,grid_search.best_score_
 
+    def tune_naive_bayes_classifier(self,model,x_train,y_train):
+        param_grid = {'var_smoothing': [1e-9, 1e-8, 1e-7, 1e-6, 1e-5]}
+        grid_search = GridSearchCV(model, param_grid, cv=self.cv, scoring='accuracy', n_jobs=-1)
+        grid_search.fit(x_train, y_train)        
+        print("Best parameters:", grid_search.best_params_)
+        return grid_search.best_params_
+
 

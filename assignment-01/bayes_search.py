@@ -2,7 +2,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from skopt import BayesSearchCV
 from skopt.space import Real, Categorical, Integer
-from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 import pandas as pd
 
 
@@ -66,5 +66,27 @@ class BayesianSearch:
         print("Best Validation Accuracy:", bayes_search.best_score_)
         # Return best parameters and accuracy
         return bayes_search.best_params_, bayes_search.best_score_
+
+    def tune_naive_bayes_classifier(self,model,x_train,y_train):
+        param_space = {
+                'var_smoothing': Real(1e-9, 1e-2, prior='log-uniform')
+            }
+
+        # Initialize Bayesian Optimization
+        bayes_search = BayesSearchCV(
+            model, 
+            param_space, 
+            n_iter=20,  # Number of iterations
+            cv=5,       # 5-fold cross-validation
+            scoring='accuracy', 
+            n_jobs=-1
+        )
+        # Fit the model
+        bayes_search.fit(x_train, y_train)
+        # Best hyperparameter
+        print("Best Params:", bayes_search.best_params_)
+        print("Best Validation Accuracy:", bayes_search.best_score_)
+        return bayes_search.best_estimator_
+        
         
               
