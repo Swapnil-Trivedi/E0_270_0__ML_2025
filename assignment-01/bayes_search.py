@@ -1,8 +1,6 @@
-from sklearn.model_selection import cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from skopt import BayesSearchCV
 from skopt.space import Real, Categorical, Integer
-from sklearn.metrics import accuracy_score
 import pandas as pd
 
 
@@ -76,8 +74,8 @@ class BayesianSearch:
         bayes_search = BayesSearchCV(
             model, 
             param_space, 
-            n_iter=20,  # Number of iterations
-            cv=5,       # 5-fold cross-validation
+            n_iter=self.n_iter,  # Number of iterations
+            cv=self.c,
             scoring='accuracy', 
             n_jobs=-1
         )
@@ -87,6 +85,18 @@ class BayesianSearch:
         print("Best Params:", bayes_search.best_params_)
         print("Best Validation Accuracy:", bayes_search.best_score_)
         return bayes_search.best_estimator_
+    
+    def tune_linear_svm(self,model,x_train,y_train):
+        param_space = {
+            'C': Real(0.0001, 100, prior='log-uniform')  # C in a log-uniform scale
+        }
         
+        # Initialize Bayesian Search
+        bayes_search = BayesSearchCV(model, param_space, n_iter=self.n_iter, cv=self.cv, scoring='accuracy', n_jobs=-1)
+        bayes_search.fit(x_train, y_train)
         
+        # Best Parameters & Score
+        print("Best Parameters:", bayes_search.best_params_)
+        print("Best Validation Accuracy:", bayes_search.best_score_)
+        return bayes_search.best_params_
               
