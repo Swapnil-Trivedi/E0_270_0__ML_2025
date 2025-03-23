@@ -18,6 +18,6 @@ class DataHandler:
     
     #function to split the data into features and target X is features and Y is target
     def split_data(self,data):
-        X=data.drop(columns=["Survived","PassengerId"])
+        X=data.drop(columns=["Survived"])
         Y=data["Survived"]
         return X,Y
