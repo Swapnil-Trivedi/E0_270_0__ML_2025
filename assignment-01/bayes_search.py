@@ -1,6 +1,8 @@
 from sklearn.model_selection import cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 from skopt import BayesSearchCV
+from skopt.space import Real, Categorical, Integer
+from sklearn.linear_model import LogisticRegression
 import pandas as pd
 
 
@@ -38,3 +40,31 @@ class BayesianSearch:
         best_score = bayes_search.best_score_
 
         return best_k, best_score
+
+    def tune_logistic_regression(self,model,x_train,y_train):
+        param_space = {
+            'C': Real(0.001, 100, prior='log-uniform'),  # Regularization strength
+            'penalty': Categorical(['l1', 'l2']),  # Regularization type
+            'solver': Categorical(['liblinear', 'saga']),  # Optimization algorithm
+            'max_iter': Integer(100, 500)  # Maximum iterations
+        }
+
+        # Initialize Bayesian Search with Logistic Regression
+        bayes_search = BayesSearchCV(
+            estimator=model,
+            search_spaces=param_space,
+            n_iter=self.n_iter,
+            cv=self.cv,
+            scoring='accuracy',
+            n_jobs=-1,  # Use all available CPUs
+            random_state=42
+        )
+
+        # Fit the model
+        bayes_search.fit(x_train, y_train)
+        print("Best Params:", bayes_search.best_params_)
+        print("Best Validation Accuracy:", bayes_search.best_score_)
+        # Return best parameters and accuracy
+        return bayes_search.best_params_, bayes_search.best_score_
+        
+              
