@@ -9,28 +9,20 @@ class GridSearch:
     def __init__(self,cv=5):
         self.cv = cv
 
-    def tune_knn(self,x_train,y_train,plot=True):       
-        k_range = range(1, 30)
-        results = []
-        max_score = 0
-        best_k = None
-        for k in k_range:
-            print(f"Trying K={k}")
-            knn = KNeighborsClassifier(n_neighbors=k)
-            score = cross_val_score(knn,x_train,y_train, cv=self.cv, scoring='accuracy').mean()
-            results.append({'K': k, 'Accuracy': score})
-            #store max accuracy and best hyperparameters
-            if score > max_score:
-                max_score = score
-                best_k = k
-                    
-        df_results = pd.DataFrame(results)
+    def tune_knn(self,x_train,y_train):       
+        param_grid = {
+        'n_neighbors': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],  # Possible values for k (number of neighbors)
+        'p': [1, 2,3,4,5,6,7,8,9,10],  # p = 1 for Manhattan distance, p = 2 for Euclidean distance
+        'weights': ['uniform', 'distance']  # 'uniform' for equal weight, 'distance' for distance-based weight
+        }
+        knn=KNeighborsClassifier()
+        grid_search = GridSearchCV(estimator=knn, param_grid=param_grid, cv=self.cv, n_jobs=-1, verbose=1)
+        grid_search.fit(x_train, y_train)
 
-        #Plot results
-        if plot:
-            self._plot_knn_results(df_results)
+        # Get the best model and parameters
+        best_params = grid_search.best_params_
 
-        return (best_k, max_score)
+        return grid_search.best_score_, best_params , 
 
     def _plot_knn_results(self, df_results):
        #plot k vs accuracy

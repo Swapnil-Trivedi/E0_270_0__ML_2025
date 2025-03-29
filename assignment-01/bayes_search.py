@@ -5,13 +5,15 @@ import pandas as pd
 
 
 class BayesianSearch:
-    def __init__(self, cv=5, n_iter=30):
+    def __init__(self, cv=3, n_iter=30):
         self.cv = cv
         self.n_iter = n_iter  # Number of iterations for Bayesian optimization
     
     def tune_knn(self, x_train, y_train):
         search_space = {
-            'n_neighbors': (1, 30)  # Only tuning K
+            'n_neighbors': (1, 30),  #tuning K
+            'p' : (1,10),
+            'weights' : ['uniform','distance']
         }
         
         knn = KNeighborsClassifier()
@@ -37,7 +39,7 @@ class BayesianSearch:
         best_k = bayes_search.best_params_['n_neighbors']
         best_score = bayes_search.best_score_
 
-        return best_k, best_score
+        return best_score , bayes_search.best_params_
 
     def tune_logistic_regression(self,model,x_train,y_train):
         param_space = {
