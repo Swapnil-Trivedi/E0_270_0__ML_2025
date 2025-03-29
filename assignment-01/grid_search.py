@@ -32,10 +32,10 @@ class GridSearch:
         plt.title('KNN Performance')
         plt.show()
     
-    def tune_logistic_regression(self,model,x_train,y_train):
-        param_grid = {'C': [0.001, 0.01, 0.1, 1, 10], 'penalty': ['l1', 'l2'],'solver':['liblinear','saga'],'max_iter':[700]}
-        log_reg = model
-        grid_search = GridSearchCV(log_reg, param_grid, cv=5, scoring='accuracy', n_jobs=-1)
+    def tune_logistic_regression(self,x_train,y_train):
+        param_grid = {'C': [0.001, 0.01, 0.1, 1, 10], 'penalty': ['l1', 'l2'],'solver':['liblinear','saga'],'max_iter':[500]}
+        log_reg = LogisticRegression()
+        grid_search = GridSearchCV(estimator=log_reg, param_grid=param_grid, cv=self.cv, scoring='accuracy', n_jobs=-1)
         grid_search.fit(x_train, y_train)
         print("Best Parameters:", grid_search.best_params_)
         print("Best Cross-Val Score:", grid_search.best_score_)

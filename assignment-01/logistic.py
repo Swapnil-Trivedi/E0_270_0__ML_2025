@@ -7,8 +7,6 @@ import seaborn as sns
 from data_handler.data_handler import DataHandler
 from grid_search import *
 from bayes_search import *
-import warnings
-warnings.filterwarnings("ignore")
 
 
 
@@ -56,8 +54,8 @@ class LogisticRegressionClassifier:
             targets = self.test_targets
         predictions = self.predict(features)
         print("Accuracy: ",accuracy_score(targets,predictions))
-        print("Classification Report: ",classification_report(targets,predictions))
-        print("Confusion Matrix: ",confusion_matrix(targets,predictions))
+        print("Classification Report: \n",classification_report(targets,predictions))
+        print("Confusion Matrix: \n",confusion_matrix(targets,predictions))
         print("Roc Score : ",roc_auc_score(targets,predictions))
         self.plot_confusion_matrix(targets,predictions,DataFlag)
     
@@ -89,15 +87,15 @@ lr.evaluate(DataFlag="Validation")
 lr.evaluate(DataFlag="Test")
 
 # %%
-gs=GridSearch()
-gs.tune_logistic_regression(lr.model,lr.validation_features,lr.validation_targets)
+gs=GridSearch(cv=3)
+gs.tune_logistic_regression(lr.validation_features,lr.validation_targets)
 
 # %%
-bs=BayesianSearch()
-bs.tune_logistic_regression(lr.model,lr.validation_features,lr.validation_targets)
+bs=BayesianSearch(n_iter=50)
+bs.tune_logistic_regression(lr.validation_features,lr.validation_targets)
 
 # %%
-lr_optimized=LogisticRegressionClassifier(c=11.54,penalty="l2",solver="saga")
+lr_optimized=LogisticRegressionClassifier(c=3.905815130570204,penalty="l1",solver="saga")
 lr_optimized.load_train_data()
 lr_optimized.load_validation_data()
 lr_optimized.load_test_data()
@@ -111,3 +109,8 @@ lr_optimized.evaluate(DataFlag="Validation")
 
 # %%
 lr_optimized.evaluate(DataFlag="Test")
+
+# %%
+
+
+

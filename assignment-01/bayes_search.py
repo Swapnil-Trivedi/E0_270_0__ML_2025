@@ -1,4 +1,5 @@
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
 from skopt import BayesSearchCV
 from skopt.space import Real, Categorical, Integer
 import pandas as pd
@@ -41,14 +42,14 @@ class BayesianSearch:
 
         return best_score , bayes_search.best_params_
 
-    def tune_logistic_regression(self,model,x_train,y_train):
+    def tune_logistic_regression(self,x_train,y_train):
         param_space = {
             'C': Real(0.001, 100, prior='log-uniform'),  # Regularization strength
             'penalty': Categorical(['l1', 'l2']),  # Regularization type
             'solver': Categorical(['liblinear', 'saga']),  # Optimization algorithm
             'max_iter': Integer(100, 500)  # Maximum iterations
         }
-
+        model = LogisticRegression()
         # Initialize Bayesian Search with Logistic Regression
         bayes_search = BayesSearchCV(
             estimator=model,
