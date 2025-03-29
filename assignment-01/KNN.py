@@ -3,7 +3,7 @@
 from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import classification_report
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix,roc_auc_score
 from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -12,18 +12,12 @@ from data_handler.data_handler import DataHandler
 from grid_search import *
 from bayes_search import *
 
-# %% [markdown]
-# The `KNN` class implements the K-Nearest Neighbors algorithm with methods for 
-# data loading, training, prediction, and evaluation. 
-# It uses a custom `DataHandler` for managing data and a Scikit-learn KNN model.
-# Key methods include `train()`, `predict()`, `evaluate()`, and `plot_confusion_matrix()`.
-
 # %%
 #class for the KNN algorithm
 class KNN():
-    def __init__(self,K=3):
+    def __init__(self,K=3,P=2,weight='distance'):
         self.K=K 
-        self.model = KNeighborsClassifier(n_neighbors=self.K)
+        self.model = KNeighborsClassifier(n_neighbors=self.K,p=P,weights=weight)
         self.data_handler = DataHandler()
     
     #loads the training data from the data handler as features and targets from the cleaned training data
@@ -56,8 +50,9 @@ class KNN():
             targets = self.test_targets
         predictions = self.predict(features)
         print("Accuracy: ",accuracy_score(targets,predictions))
-        print("Classification Report: ",classification_report(targets,predictions))
-        print("Confusion Matrix: ",confusion_matrix(targets,predictions))
+        print("Classification Report: \n",classification_report(targets,predictions))
+        print("Confusion Matrix: \n",confusion_matrix(targets,predictions))
+        print("Roc Score : ",roc_auc_score(targets,predictions))
         self.plot_confusion_matrix(targets,predictions,DataFlag)
 
     #plot confusion matrix
@@ -101,10 +96,10 @@ knn.evaluate(DataFlag="Test")
 # ### Performing model tuning to find optimal K
 
 # %%
-gs=GridSearch()
+gs=GridSearch(cv=3)
 bs=BayesianSearch()
 print("Applying Grid search to tune the K hyperparameter of the model")
-result_gs=gs.tune_knn(x_train=knn.validation_features,y_train=knn.validation_targets,plot=True)
+result_gs=gs.tune_knn(x_train=knn.validation_features,y_train=knn.validation_targets)
 
 # %%
 print("Applying Bayesian search to tune the K hyperparameter of the model")
@@ -119,7 +114,7 @@ print("Bayesian Search Results: ",result_bs)
 
 # %%
 print("Creating a new KNN model with the tunned K parameter for max accuracy")
-new_knn=KNN(K=12)
+new_knn=KNN(K=14,P=8,weight='distance')
 new_knn.load_train_data()
 new_knn.train()
 
