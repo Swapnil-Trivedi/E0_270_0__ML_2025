@@ -50,8 +50,8 @@ class NaiveBayesClassifier:
             targets = self.test_targets
         predictions = self.predict(features)
         print("Accuracy: ",accuracy_score(targets,predictions))
-        print("Classification Report: ",classification_report(targets,predictions))
-        print("Confusion Matrix: ",confusion_matrix(targets,predictions))
+        print("Classification Report: \n",classification_report(targets,predictions))
+        print("Confusion Matrix: \n",confusion_matrix(targets,predictions))
         print("Roc Score : ",roc_auc_score(targets,predictions))
         self.plot_confusion_matrix(targets,predictions,DataFlag)
     
@@ -84,11 +84,11 @@ nb.evaluate(DataFlag="Test")
 
 # %%
 gs=GridSearch()
-gs_result=gs.tune_naive_bayes_classifier(nb.model,nb.validation_features,nb.validation_targets)
+gs_result=gs.tune_naive_bayes_classifier(nb.validation_features,nb.validation_targets)
 
 # %%
 bs=BayesianSearch()
-bs_result=bs.tune_naive_bayes_classifier(nb.model,nb.validation_features,nb.validation_targets)
+bs_result=bs.tune_naive_bayes_classifier(nb.validation_features,nb.validation_targets)
 
 print("Grid Search Result : {0}\nBayesian Search Result : {1}".format(gs_result,bs_result))
 

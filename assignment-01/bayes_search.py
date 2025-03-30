@@ -1,5 +1,6 @@
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
 from skopt import BayesSearchCV
 from skopt.space import Real, Categorical, Integer
 import pandas as pd
@@ -68,17 +69,17 @@ class BayesianSearch:
         # Return best parameters and accuracy
         return bayes_search.best_params_, bayes_search.best_score_
 
-    def tune_naive_bayes_classifier(self,model,x_train,y_train):
+    def tune_naive_bayes_classifier(self,x_train,y_train):
         param_space = {
                 'var_smoothing': Real(1e-9, 1e-2, prior='log-uniform')
             }
-
+        model=GaussianNB()
         # Initialize Bayesian Optimization
         bayes_search = BayesSearchCV(
-            model, 
-            param_space, 
+            estimator=model, 
+            search_spaces=param_space, 
             n_iter=self.n_iter,  # Number of iterations
-            cv=self.c,
+            cv=self.cv,
             scoring='accuracy', 
             n_jobs=-1
         )

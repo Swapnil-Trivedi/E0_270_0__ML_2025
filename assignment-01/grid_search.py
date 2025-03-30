@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
 import pandas as pd
 from sklearn.model_selection import GridSearchCV
 
@@ -41,8 +42,9 @@ class GridSearch:
         print("Best Cross-Val Score:", grid_search.best_score_)
         return grid_search.best_params_,grid_search.best_score_
 
-    def tune_naive_bayes_classifier(self,model,x_train,y_train):
-        param_grid = {'var_smoothing': [1e-9, 1e-8, 1e-7, 1e-6, 1e-5]}
+    def tune_naive_bayes_classifier(self,x_train,y_train):
+        model=GaussianNB()
+        param_grid = {'var_smoothing': [1e-9, 1e-8, 1e-7, 1e-6, 1e-5,1e-4,1e-3,1e-2]}
         grid_search = GridSearchCV(model, param_grid, cv=self.cv, scoring='accuracy', n_jobs=-1)
         grid_search.fit(x_train, y_train)        
         print("Best parameters:", grid_search.best_params_)
