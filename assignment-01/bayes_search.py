@@ -106,31 +106,18 @@ class BayesianSearch:
         print("Best Validation Accuracy:", bayes_search.best_score_)
         return bayes_search.best_params_
     
-    def tune_rbf_svm(self,model,x_train,y_train):
-        param_space_numeric = {
-            'C': Real(0.0001, 1, prior='log-uniform'),  # C in a log-uniform scale
-            'gamma': Real(0.01,1,prior="log-uniform")
-        }
-        
-        # Initialize Bayesian Search
-        bayes_search_numeric = BayesSearchCV(model, param_space_numeric, n_iter=self.n_iter, cv=self.cv, scoring='accuracy', n_jobs=-1)
-        bayes_search_numeric.fit(x_train, y_train)
-        
+    def tune_rbf_svm(self,x_train,y_train): 
         param_space_categorical = {
              'C': Real(0.0001, 1, prior='log-uniform'),
              'gamma': Categorical(["scale", "auto"])
             }
+        model=SVC(kernel="rbf")
         bayes_search_categorical = BayesSearchCV(model, param_space_categorical, n_iter=self.n_iter, cv=self.cv, scoring='accuracy', n_jobs=-1)
         bayes_search_categorical.fit(x_train, y_train)
-
-        if bayes_search_categorical.best_score_ > bayes_search_numeric.best_score_:
-             best_params = bayes_search_categorical.best_params_
-             best_score  = bayes_search_categorical.best_score_
-        else:
-            best_params = bayes_search_numeric.best_params_
-            best_score  = bayes_search_numeric.best_score_
-
-            print("Final Best Parameters:", best_params)
+        
+        best_params = bayes_search_categorical.best_params_
+        best_score  = bayes_search_categorical.best_score_
+        print("Final Best Parameters:", best_params)
         # Best Parameters & Score
         print("Best Parameters:", best_params)
         print("Best Validation Accuracy:", best_score)

@@ -65,12 +65,12 @@ class GridSearch:
         print("Best Validation Accuracy:", grid_search.best_score_)
         return grid_search.best_params_
     
-    def tune_rbf_svm(self,model,x_train,y_train):
+    def tune_rbf_svm(self,x_train,y_train):
         param_grid = {
-            'C': [0.1, 1, 10, 100],  # Regularization
-            'gamma': ['scale', 'auto', 0.001, 0.01, 0.1, 1]  # RBF kernel gamma values
+            'C': [0.1,0.01,1,5,10,15,20],  # Regularization
+            'gamma': ['scale', 'auto']  # RBF kernel gamma values
         }
-
+        model=SVC(kernel='rbf')
         grid_search = GridSearchCV(model, param_grid, cv=self.cv, scoring='accuracy', n_jobs=-1)
         grid_search.fit(x_train, y_train)
 

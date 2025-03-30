@@ -10,7 +10,7 @@ from bayes_search import *
 
 # %%
 class RBFSVMClassifier:
-    def __init__(self,C=1,Kernel="rbf",Gamma='auto'):
+    def __init__(self,C=1,Kernel="rbf",Gamma=1):
         self.data_handler = DataHandler()
         self.model=SVC(C=1,kernel=Kernel,gamma=Gamma)
     #loads the training data from the data handler as features and targets from the cleaned training data
@@ -49,8 +49,8 @@ class RBFSVMClassifier:
             targets = self.test_targets
         predictions = self.predict(features)
         print("Accuracy: ",accuracy_score(targets,predictions))
-        print("Classification Report: ",classification_report(targets,predictions))
-        print("Confusion Matrix: ",confusion_matrix(targets,predictions))
+        print("Classification Report: \n",classification_report(targets,predictions))
+        print("Confusion Matrix: \n",confusion_matrix(targets,predictions))
         print("Roc Score : ",roc_auc_score(targets,predictions))
         self.plot_confusion_matrix(targets,predictions,DataFlag)
     
@@ -82,15 +82,16 @@ rbf_svm.evaluate(DataFlag="Validation")
 rbf_svm.evaluate("Test")
 
 # %%
-gs=GridSearch(cv=10)
-gs.tune_rbf_svm(rbf_svm.model,rbf_svm.validation_features,rbf_svm.validation_targets)
+gs=GridSearch(cv=3)
+gs.tune_rbf_svm(rbf_svm.validation_features,rbf_svm.validation_targets)
 
 # %%
-bs=BayesianSearch(n_iter=100)
-bs.tune_rbf_svm(rbf_svm.model,rbf_svm.validation_features,rbf_svm.validation_targets)
+bs=BayesianSearch(n_iter=25)
+bs.tune_rbf_svm(rbf_svm.validation_features,rbf_svm.validation_targets)
 
 # %%
-rbf_svm_optimized=RBFSVMClassifier(C=0.5,Kernel="rbf",Gamma="auto")
+#rbf_svm_optimized=RBFSVMClassifier(C=0.5,Kernel="rbf",Gamma="auto")
+rbf_svm_optimized=RBFSVMClassifier(C= 0.7459214940396622,Kernel="rbf",Gamma="scale")
 rbf_svm_optimized.load_train_data()
 rbf_svm_optimized.load_validation_data()
 rbf_svm_optimized.load_test_data()
@@ -103,3 +104,5 @@ rbf_svm_optimized.evaluate(DataFlag="Validation")
 
 # %%
 rbf_svm_optimized.evaluate(DataFlag="Test")
+
+
