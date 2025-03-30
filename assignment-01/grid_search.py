@@ -3,6 +3,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
 import pandas as pd
 from sklearn.model_selection import GridSearchCV
 
@@ -49,12 +50,13 @@ class GridSearch:
         grid_search.fit(x_train, y_train)        
         print("Best parameters:", grid_search.best_params_)
         return grid_search.best_params_
-    def tune_linear_svm(self,model,x_train,y_train):
+    def tune_linear_svm(self,x_train,y_train):
         param_grid = {
             'C': [0.001, 0.01, 0.1, 1, 10, 100]  # Different values for regularization
         }
 
         # Grid Search with Cross-Validation
+        model=SVC(kernel="linear")
         grid_search = GridSearchCV(model, param_grid, cv=5, scoring='accuracy', n_jobs=-1)
         grid_search.fit(x_train, y_train)
 

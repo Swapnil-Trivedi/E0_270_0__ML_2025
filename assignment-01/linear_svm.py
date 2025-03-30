@@ -49,8 +49,8 @@ class LinearSVMClassifier:
             targets = self.test_targets
         predictions = self.predict(features)
         print("Accuracy: ",accuracy_score(targets,predictions))
-        print("Classification Report: ",classification_report(targets,predictions))
-        print("Confusion Matrix: ",confusion_matrix(targets,predictions))
+        print("Classification Report: \n",classification_report(targets,predictions))
+        print("Confusion Matrix: \n",confusion_matrix(targets,predictions))
         print("Roc Score : ",roc_auc_score(targets,predictions))
         self.plot_confusion_matrix(targets,predictions,DataFlag)
     
@@ -83,16 +83,16 @@ linear_svm.evaluate(DataFlag="Test")
 
 # %%
 gs=GridSearch()
-gs_result=gs.tune_linear_svm(linear_svm.model,linear_svm.validation_features,linear_svm.validation_targets)
+gs_result=gs.tune_linear_svm(linear_svm.validation_features,linear_svm.validation_targets)
 
 # %%
 bs=BayesianSearch(n_iter=100)
-bs_result=bs.tune_linear_svm(linear_svm.model,linear_svm.validation_features,linear_svm.validation_targets)
+bs_result=bs.tune_linear_svm(linear_svm.validation_features,linear_svm.validation_targets)
 
 print("Grid Search Result : {0}\nBayesian Search Result : {1}".format(gs_result,bs_result))
 
 # %%
-linear_svm_optimized=LinearSVMClassifier(C=4.078853593030065)
+linear_svm_optimized=LinearSVMClassifier(C=10)
 linear_svm_optimized.load_train_data()
 linear_svm_optimized.load_validation_data()
 linear_svm_optimized.load_test_data()
@@ -107,6 +107,31 @@ linear_svm_optimized.evaluate(DataFlag="Validation")
 linear_svm_optimized.evaluate(DataFlag="Test")
 
 # %%
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import pandas as pd
+
+# Example confusion matrices for different stages
+conf_matrices = {
+    "Unoptimized Validation": np.array([[49, 9], [8, 23]]),
+    "Unoptimized Test": np.array([[95, 14], [23, 46]]),
+    "Optimized Validation": np.array([[49, 9], [8, 23]]),
+    "Optimized Test": np.array([[95, 14], [23, 46]])
+}
+
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+axes = axes.flatten()
+
+for i, (title, cm) in enumerate(conf_matrices.items()):
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Pred 0", "Pred 1"], 
+                yticklabels=["Actual 0", "Actual 1"], ax=axes[i])
+    axes[i].set_title(title)
+    axes[i].set_xlabel("Predicted Label")
+    axes[i].set_ylabel("True Label")
+
+plt.tight_layout()
+plt.show()
 
 
 
